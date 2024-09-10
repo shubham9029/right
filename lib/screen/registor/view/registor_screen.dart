@@ -1,85 +1,107 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:shubham4338/utils/helper/auth_helper.dart';
 
-import '../../../utils/helper/auth_helper.dart';
+import '../../home/controller/home_controller.dart';
 
-class RegistorScreen extends StatefulWidget {
-  const RegistorScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<RegistorScreen> createState() => _RegistorScreenState();
+  State<SignUpScreen> createState() => _SignUpScreen();
 }
 
-class _RegistorScreenState extends State<RegistorScreen> {
-  TextEditingController txtemail2 = TextEditingController();
-  TextEditingController txtpass2 = TextEditingController();
+class _SignUpScreen extends State<SignUpScreen> {
+  TextEditingController txtEmail = TextEditingController();
+  TextEditingController txtPass = TextEditingController();
+  HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Sign Up",
-                style: TextStyle(
-                    fontSize: 30,
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                controller: txtemail2,
-                decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email)),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                controller: txtpass2,
-                decoration: const InputDecoration(
-                  labelText: "password",
-                  prefixIcon: Icon(Icons.password),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              TextButton(
-                  onPressed: () async {
-                    String? msg = await AuthHelper.helper
-                        .signUp(txtemail2.text, txtpass2.text);
-                    if (msg == "Success") {
-                      Get.back();
-                    } else {
-                      Get.snackbar("$msg", "");
-                    }
-                  },
-                  child: const Text(
-                    "Sing Up",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  )),
-              TextButton(
-                  onPressed: () {
-                    Get.offAllNamed("login");
-                  },
-                  child: const Text(
-                    "Alredy Have Account Sign In",
-                    style: TextStyle(fontSize: 20, color: Colors.grey),
-                  ))
-            ],
+      body: Stack(
+        children: [
+          Obx(
+                () => controller.pTheme == true
+                ? Image.asset(
+              "assets/image/img_2.png",
+              width: MediaQuery.sizeOf(context).width,
+              fit: BoxFit.cover,
+              height: MediaQuery.sizeOf(context).height,
+            )
+                : Image.asset(
+              "assets/image/img.png",
+              width: MediaQuery.sizeOf(context).width,
+              fit: BoxFit.cover,
+              height: MediaQuery.sizeOf(context).height,
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/image/chatlogo.png",
+                  height: 100,
+                  width: 100,
+                ),
+                const Text(
+                  "Chat Me SignUp",
+                  style: TextStyle(fontSize: 20),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                TextField(
+                  controller: txtEmail,
+                  decoration: const InputDecoration(hintText: "Email"),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Obx(
+                      () => TextField(
+                    obscureText: controller.isHide.value,
+                    controller: txtPass,
+                    decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              controller.showPassword();
+                            },
+                            icon: Icon(controller.isHide.value
+                                ? Icons.visibility_off
+                                : Icons.visibility)),
+                        hintText: "Password"),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      String? msg = await AuthHelper.helper
+                          .signUp(txtEmail.text, txtPass.text);
+                      if (msg == "Success") {
+                        Get.back();
+                      } else {
+                        Get.snackbar("$msg", "Chat Me");
+                      }
+                    },
+                    child: const Text("Sign In")),
+                const SizedBox(
+                  height: 50,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("Already have an account"))
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
